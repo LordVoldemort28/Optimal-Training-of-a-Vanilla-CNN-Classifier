@@ -28,8 +28,8 @@ def initialization(configs):
 
 
 if __name__ == "__main__":
-    params_dict = config_dict(config_dict(os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), 'configs.txt')))
+    params_dict = config_dict(os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), 'configs.txt'))
     configs = Config(params_dict)
 
     # Start comet ML Experiment
