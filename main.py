@@ -13,7 +13,7 @@ from scripts.criterions import cross_entropy_loss
 def initialization(configs):
     configs.loader, configs.labels = load_cifar10_dataset(configs)
     
-    if configs.activation_function != "adam":
+    if configs.activation_function != "relu":
         model = Net(activation_function=configs.activation_function)
     else:
         model = Net()
