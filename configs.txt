@@ -1,0 +1,14 @@
+experiment_name = experiment_1
+data_dir = ./data
+shuffle = True
+valid_size = 0.25
+random_seed = 42
+batch_size = 128
+num_workers = 2
+pin_memory = True
+learning_rate = 0.01
+momentum = 0.9
+weight_decay = 5e-4
+activation_function = relu
+epochs = 100
+optimizer = adam
