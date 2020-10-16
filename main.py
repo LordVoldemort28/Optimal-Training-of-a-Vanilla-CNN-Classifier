@@ -12,13 +12,17 @@ from scripts.criterions import cross_entropy_loss
 
 def initialization(configs):
     configs.loader, configs.labels = load_cifar10_dataset(configs)
-    model = Net()
-
+    
+    if configs.activation_function != "adam":
+        model = Net(activation_function=configs.activation_function)
+    else:
+        model = Net()
+        
     if torch.cuda.is_available() == True:
         model = nn.DataParallel(model)
         configs.model = model
     else:
-        print('Please run the experiment in gpu')
+        print("Please run the experiment in gpu")
         exit(1)
 
     configs.criterion = cross_entropy_loss()
