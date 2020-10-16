@@ -25,41 +25,47 @@ def train(configs):
         epoch_time = time.time()
 
         print("============Epoch: {}=============".format(epoch))
-        for batch_idx, (data, target) in enumerate(loader['train']):
-            steps += 1
+        with configs.experiment.train():
 
-            if torch.cuda.is_available() == True:
-                data, target = data.cuda(), target.cuda()
+            for batch_idx, (data, target) in enumerate(loader['train']):
+                steps += 1
 
-            optimizer.zero_grad()
+                if torch.cuda.is_available() == True:
+                    data, target = data.cuda(), target.cuda()
 
-            # get output
-            output = model(data)
+                optimizer.zero_grad()
 
-            # calculate loss and backprop
-            loss = criterion(output, target)
+                # get output
+                output = model(data)
 
-            loss.backward()
-            optimizer.step()
+                # calculate loss and backprop
+                loss = criterion(output, target)
 
-            running_loss += loss.item()
+                loss.backward()
+                optimizer.step()
 
-            # record the average training loss
-            train_loss += ((1 / (batch_idx + 1)) *
-                           (loss.data - train_loss)).cpu().numpy()
+                running_loss += loss.item()
 
-            # convert output prop to predicted class
-            pred = output.data.max(1, keepdim=True)[1]
+                # record the average training loss
+                train_loss += ((1 / (batch_idx + 1)) *
+                               (loss.data - train_loss)).cpu().numpy()
 
-            # accumulate correct predictions.
-            correct += np.sum(np.squeeze(pred.eq(target.data.view_as(pred))).cpu().numpy())
+                # convert output prop to predicted class
+                pred = output.data.max(1, keepdim=True)[1]
 
-            # accumulate total number of examples.
-            total += data.size(0)
+                # accumulate correct predictions.
+                correct += np.sum(np.squeeze(pred.eq(target.data.view_as(pred))).cpu().numpy())
 
-        # compute training accuracy.
-        train_acc = correct / total
-        print("train_acc = {}".format(train_acc))
+                # accumulate total number of examples.
+                total += data.size(0)
+            # compute training accuracy.
+            train_acc = correct / total
+            print("train_acc = {}".format(train_acc))
+
+            configs.experiment.log_metric(
+                'accuracy', train_acc, epoch=epoch)
+            configs.experiment.log_metric(
+                'loss', float(train_loss), epoch=epoch)
 
         # validate model
         model.eval()
@@ -67,34 +73,39 @@ def train(configs):
         total = 0.
 
         step_val = 0
+        with configs.experiment.validate():
+            with torch.no_grad():
+                for batch_idx, (data, target) in enumerate(loader['valid']):
 
-        with torch.no_grad():
-            for batch_idx, (data, target) in enumerate(loader['valid']):
+                    if torch.cuda.is_available() == True:
+                        data, target = data.cuda(), target.cuda()
 
-                if torch.cuda.is_available() == True:
-                    data, target = data.cuda(), target.cuda()
+                    # Get output
+                    output = model(data)
+                    # Calculate loss
+                    loss = criterion(output, target)
 
-                # Get output
-                output = model(data)
-                # Calculate loss
-                loss = criterion(output, target)
+                    pred = output.data.max(1, keepdim=True)[1]
 
-                pred = output.data.max(1, keepdim=True)[1]
+                    # records the average validation loss
+                    valid_loss += ((1/(batch_idx+1)) *
+                                   (loss.data - valid_loss)).cpu().numpy()
 
-                # records the average validation loss
-                valid_loss += ((1/(batch_idx+1)) *
-                               (loss.data - valid_loss)).cpu().numpy()
+                    # accumulate correct predictions
+                    batch_correct_val = np.sum(np.squeeze(
+                        pred.eq(target.data.view_as(pred))).cpu().numpy())
 
-                # accumulate correct predictions
-                batch_correct_val = np.sum(np.squeeze(
-                    pred.eq(target.data.view_as(pred))).cpu().numpy())
+                    correct += batch_correct_val
 
-                correct += batch_correct_val
+                    # accumulate total number of examples
+                    batch_total_val = data.size(0)
+                    total += batch_total_val
 
-                # accumulate total number of examples
-                batch_total_val = data.size(0)
-                total += batch_total_val
+            valid_acc = correct / total
+            print("valid_acc = {}".format(valid_acc))
+            print("Epoch duration: {}\n".format(calculate_time(epoch_time)))
 
-        valid_acc = correct / total
-        print("valid_acc = {}".format(valid_acc))
-        print("Epoch duration: {}\n".format(calculate_time(epoch_time)))
+            configs.experiment.log_metric(
+                'accuracy', valid_acc, epoch=epoch)
+            configs.experiment.log_metric(
+                'loss', float(valid_loss), epoch=epoch)

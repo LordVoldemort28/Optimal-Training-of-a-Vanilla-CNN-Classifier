@@ -1,7 +1,7 @@
 from torchvision import transforms
 
 
-def resnet_augmentation(test=false):
+def resnet_augmentation(test=False):
     if test == True:
         return transforms.Compose([
             transforms.ToTensor(),

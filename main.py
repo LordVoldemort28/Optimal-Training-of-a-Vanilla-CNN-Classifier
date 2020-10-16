@@ -1,6 +1,7 @@
+from comet_ml import Experiment
+import os
 import torch
 import torch.nn as nn
-from comet_ml import Experiment
 
 from models.vanillaCNN import Net
 from utils.helpers import config_dict, Config, get_optimizer
@@ -10,10 +11,7 @@ from scripts.criterions import cross_entropy_loss
 
 
 def initialization(configs):
-    loader, labels = load_cifar10_dataset(configs)
-
-    configs.criterion = cross_entropy_loss()
-    configs.optimizer = get_optimizer(configs)
+    configs.loader, configs.labels = load_cifar10_dataset(configs)
     model = Net()
 
     if torch.cuda.is_available() == True:
@@ -23,11 +21,15 @@ def initialization(configs):
         print('Please run the experiment in gpu')
         exit(1)
 
+    configs.criterion = cross_entropy_loss()
+    configs.optimizer = get_optimizer(configs)
+
     train(configs)
 
 
 if __name__ == "__main__":
-    params_dict = config_dict('./configs.txt')
+    params_dict = config_dict(config_dict(os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), 'configs.txt')))
     configs = Config(params_dict)
 
     # Start comet ML Experiment
