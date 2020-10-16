@@ -17,7 +17,7 @@ def initialization(configs):
         model = Net(activation_function=configs.activation_function)
     else:
         model = Net()
-        
+
     if torch.cuda.is_available() == True:
         model = nn.DataParallel(model)
         configs.model = model
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     configs = Config(params_dict)
 
     # Start comet ML Experiment
-    experiment = Experiment(api_key="W3E2kwOfZBiw21K5tJdkmxomM",
+    experiment = Experiment(api_key=configs.api_key,
                             project_name="learning-deep", workspace="lordvoldemort28")
     experiment.set_name(configs.experiment_name)
     experiment.add_tag("initialization")

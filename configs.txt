@@ -12,3 +12,4 @@ weight_decay = 5e-4
 activation_function = relu
 epochs = 100
 optimizer = adam
+api_key=<comet_ml_api_key>
