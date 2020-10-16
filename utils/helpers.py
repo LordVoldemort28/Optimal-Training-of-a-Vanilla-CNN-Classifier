@@ -1,5 +1,6 @@
 import os
 import time
+import torch.nn as nn
 from datetime import datetime, timedelta
 from scripts.optimizers import adam_optimizer, sgd_optimizer
 
@@ -44,11 +45,12 @@ def get_optimizer(configs):
     elif configs.optimizer == 'sgd':
         return sgd_optimizer(configs)
 
-
 def config_dict(location):
-    """Function reads the configs.txt file and returns
-       a dictionary with all the hyperparameters key, value
-       pairs. """
+    """
+    Function reads the configs.txt file and returns
+    a dictionary with all the hyperparameters key, value
+    pairs. 
+    """
 
     __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -70,3 +72,12 @@ def config_dict(location):
         params[key] = value
 
     return params
+
+
+def get_activation_function(configs):
+    if configs.activation == 'tanh':
+        return nn.Tanh
+    elif configs.activation == 'sigmod':
+        return nn.Sigmoid
+    else:
+        return nn.ReLU
