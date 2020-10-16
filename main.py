@@ -44,3 +44,5 @@ if __name__ == "__main__":
     configs.experiment = experiment
 
     initialization(configs)
+
+    experiment.end()
