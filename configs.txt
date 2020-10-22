@@ -1,4 +1,4 @@
-experiment_name = experiment_1
+experiment_name = vgg16_bn_sdg_2
 data_dir = ./data
 shuffle = True
 valid_size = 0.25
@@ -10,8 +10,9 @@ learning_rate = 0.01
 momentum = 0.9
 weight_decay = 5e-4
 activation_function = relu
-epochs = 100
+epochs = 2
 optimizer = sgd
 api_key=<comet_ml_api_key>
 vgg_model = vgg16_bn
 num_classes = 10
+test = True
