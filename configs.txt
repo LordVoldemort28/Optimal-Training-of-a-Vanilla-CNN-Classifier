@@ -14,3 +14,4 @@ epochs = 100
 optimizer = sgd
 api_key=<comet_ml_api_key>
 vgg_model = vgg16_bn
+num_classes = 10

@@ -7,6 +7,7 @@ from models.vanillaCNN import Net
 from models import vgg
 from utils.helpers import config_dict, Config, get_optimizer
 from scripts.training import train
+from scripts.testing import test
 from scripts.loaders import load_cifar10_dataset
 from scripts.criterions import cross_entropy_loss
 
@@ -29,6 +30,9 @@ def initialization(configs):
     configs.optimizer = get_optimizer(configs)
 
     train(configs)
+
+    if configs.test:
+        test(configs)
 
 
 if __name__ == "__main__":
