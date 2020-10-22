@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 
 from models.vanillaCNN import Net
+from models import vgg
 from utils.helpers import config_dict, Config, get_optimizer
 from scripts.training import train
 from scripts.loaders import load_cifar10_dataset
@@ -12,11 +13,13 @@ from scripts.criterions import cross_entropy_loss
 
 def initialization(configs):
     configs.loader, configs.labels = load_cifar10_dataset(configs)
-    
-    if configs.activation_function != "relu":
-        model = Net(activation_function=configs.activation_function)
-    else:
-        model = Net()
+
+    # if configs.activation_function != "relu":
+    #     model = Net(activation_function=configs.activation_function)
+    # else:
+    #     model = Net()
+
+    model = vgg.__dict__['vgg16_bn']()
 
     if torch.cuda.is_available() == True:
         model = nn.DataParallel(model)
