@@ -10,7 +10,7 @@ def train(configs):
     model = configs.model
     loader = configs.loader
     optimizer = configs.optimizer
-    criterion = configs.criterion
+    criterion = configs.criterion.cuda()
 
     running_loss = 0
     steps = 0

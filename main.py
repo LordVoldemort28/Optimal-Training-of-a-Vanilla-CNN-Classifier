@@ -14,12 +14,9 @@ from scripts.criterions import cross_entropy_loss
 def initialization(configs):
     configs.loader, configs.labels = load_cifar10_dataset(configs)
 
-    # if configs.activation_function != "relu":
-    #     model = Net(activation_function=configs.activation_function)
-    # else:
-    #     model = Net()
+    model = vgg.__dict__[configs.vgg_model]()
 
-    model = vgg.__dict__['vgg16_bn']()
+    model.features = torch.nn.DataParallel(model.features)
 
     if torch.cuda.is_available() == True:
         model = nn.DataParallel(model)

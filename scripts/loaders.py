@@ -16,11 +16,11 @@ def load_cifar10_dataset(configs):
     test_transform = resnet_augmentation(test=True)
 
     train_dataset = datasets.CIFAR10(root=data_dir, train=True, download=True,
-                                     transform=train_transform)
+                                     shuffle=True, pin_memory=True, transform=train_transform)
     valid_dataset = datasets.CIFAR10(root=data_dir, train=True, download=True,
-                                     transform=test_transform)
+                                     shuffle=False, pin_memory=True, transform=test_transform)
     test_dataset = datasets.CIFAR10(root=data_dir, train=False, download=True,
-                                    transform=test_transform)
+                                    shuffle=False, pin_memory=True, transform=test_transform)
 
     num_train = len(train_dataset)
     indices = list(range(num_train))
