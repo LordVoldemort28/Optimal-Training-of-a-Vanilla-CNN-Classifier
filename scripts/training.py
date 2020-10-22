@@ -24,6 +24,8 @@ def train(configs):
         total = 0.
         epoch_time = time.time()
 
+        adjust_learning_rate(configs, optimizer, epoch)
+
         print("============Epoch: {}=============".format(epoch))
         with configs.experiment.train():
 
@@ -109,3 +111,10 @@ def train(configs):
                 'accuracy', valid_acc, epoch=epoch)
             configs.experiment.log_metric(
                 'loss', float(valid_loss), epoch=epoch)
+
+
+def adjust_learning_rate(configs, optimizer, epoch):
+    """Sets the learning rate to the initial LR decayed by 2 every 30 epochs"""
+    lr = configs.learning_rate * (0.5 ** (epoch // 30))
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
