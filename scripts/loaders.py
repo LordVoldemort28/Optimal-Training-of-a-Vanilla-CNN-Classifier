@@ -16,11 +16,11 @@ def load_cifar10_dataset(configs):
     test_transform = resnet_augmentation(test=True)
 
     train_dataset = datasets.CIFAR10(root=data_dir, train=True, download=True,
-                                     shuffle=True, pin_memory=True, transform=train_transform)
+                                     transform=train_transform)
     valid_dataset = datasets.CIFAR10(root=data_dir, train=True, download=True,
-                                     shuffle=False, pin_memory=True, transform=test_transform)
+                                     transform=test_transform)
     test_dataset = datasets.CIFAR10(root=data_dir, train=False, download=True,
-                                    shuffle=False, pin_memory=True, transform=test_transform)
+                                    transform=test_transform)
 
     num_train = len(train_dataset)
     indices = list(range(num_train))
@@ -37,15 +37,15 @@ def load_cifar10_dataset(configs):
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, sampler=train_sampler,
-        num_workers=num_workers,
+        num_workers=num_workers, pin_memory=True
     )
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=batch_size, sampler=valid_sampler,
-        num_workers=num_workers,
+        num_workers=num_workers, pin_memory=True
     )
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=batch_size, num_workers=num_workers,
-        shuffle=False
+        shuffle=False, pin_memory=True
     )
 
     classes = ('plane', 'car', 'bird', 'cat',

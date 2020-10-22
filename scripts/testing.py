@@ -24,6 +24,9 @@ def test(configs):
             for batch_idx, (data, target) in enumerate(loader['test']):
                 print("Current batch: {}".format(batch_idx), end="\r")
 
+                if torch.cuda.is_available():
+                    data, target = data.cuda(), target.cuda()
+
                 outputs = model(data)
 
                 loss = criterion(outputs, target)
