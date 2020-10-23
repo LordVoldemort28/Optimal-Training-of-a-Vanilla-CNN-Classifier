@@ -108,9 +108,14 @@ def train(configs):
             print("Epoch duration: {}\n".format(calculate_time(epoch_time)))
 
             configs.experiment.log_metric(
-                'accuracy', valid_acc, epoch=epoch)
+                'accuracy', valid_acc, epoch=epoch
+            )
             configs.experiment.log_metric(
-                'loss', float(valid_loss), epoch=epoch)
+                'loss', float(valid_loss), epoch=epoch
+            )
+            configs.experiment.log_metric(
+                'epoch duration', epoch_time, epoch=epoch
+            )
 
 
 def adjust_learning_rate(configs, optimizer, epoch):

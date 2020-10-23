@@ -1,4 +1,6 @@
 experiment_name = vgg16_bn_sdg_2
+experiment_tag = vgg
+model = vgg
 data_dir = ./data
 shuffle = True
 valid_size = 0.25

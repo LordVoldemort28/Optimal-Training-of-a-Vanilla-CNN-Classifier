@@ -3,9 +3,7 @@ import os
 import torch
 import torch.nn as nn
 
-from models.vanillaCNN import Net
-from models import vgg
-from utils.helpers import config_dict, Config, get_optimizer
+from utils.helpers import config_dict, Config, get_optimizer, load_model
 from scripts.training import train
 from scripts.testing import test
 from scripts.loaders import load_cifar10_dataset
@@ -15,9 +13,7 @@ from scripts.criterions import cross_entropy_loss
 def initialization(configs):
     configs.loader, configs.labels = load_cifar10_dataset(configs)
 
-    model = vgg.__dict__[configs.vgg_model]()
-
-    model.features = torch.nn.DataParallel(model.features)
+    model = load_model(configs)
 
     if torch.cuda.is_available() == True:
         model = nn.DataParallel(model)
@@ -44,7 +40,7 @@ if __name__ == "__main__":
     experiment = Experiment(api_key=configs.api_key,
                             project_name="learning-deep", workspace="lordvoldemort28")
     experiment.set_name(configs.experiment_name)
-    experiment.add_tag("initialization")
+    experiment.add_tag(configs.experiment_tag)
 
     # Log hyperparameters in comet ML
     experiment.log_parameters(configs)

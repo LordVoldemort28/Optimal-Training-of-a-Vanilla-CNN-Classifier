@@ -1,8 +1,11 @@
 import os
 import time
 import torch.nn as nn
+import torch
 from datetime import datetime, timedelta
 from scripts.optimizers import adam_optimizer, sgd_optimizer
+from models.vanillaCNN import Net
+from models import vgg
 
 
 class Config(object):
@@ -44,6 +47,22 @@ def get_optimizer(configs):
         return adam_optimizer(configs)
     elif configs.optimizer == 'sgd':
         return sgd_optimizer(configs)
+
+
+def load_model(configs):
+    if configs.model == 'vanilla':
+        if configs.activation_function != "relu":
+            return Net(activation_function=configs.activation_function)
+        else:
+            return Net()
+    elif configs.model == 'vgg':
+        model = vgg.__dict__[configs.vgg_model]()
+        model.features = torch.nn.DataParallel(model.features)
+        return model
+    else:
+        print("Please config model")
+        exit(1)
+
 
 def config_dict(location):
     """
