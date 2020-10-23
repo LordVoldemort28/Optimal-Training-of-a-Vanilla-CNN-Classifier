@@ -10,7 +10,7 @@ def train(configs):
     model = configs.model
     loader = configs.loader
     optimizer = configs.optimizer
-    criterion = configs.criterion
+    criterion = configs.criterion.cuda()
 
     running_loss = 0
     steps = 0
@@ -23,6 +23,8 @@ def train(configs):
         correct = 0.
         total = 0.
         epoch_time = time.time()
+
+        adjust_learning_rate(configs, optimizer, epoch)
 
         print("============Epoch: {}=============".format(epoch))
         with configs.experiment.train():
@@ -106,6 +108,20 @@ def train(configs):
             print("Epoch duration: {}\n".format(calculate_time(epoch_time)))
 
             configs.experiment.log_metric(
-                'accuracy', valid_acc, epoch=epoch)
+                'accuracy', valid_acc, epoch=epoch
+            )
             configs.experiment.log_metric(
-                'loss', float(valid_loss), epoch=epoch)
+                'loss', float(valid_loss), epoch=epoch
+            )
+        configs.experiment.log_metric(
+            'epoch duration',
+            calculate_time(epoch_time, epoch_duration=True),
+            epoch=epoch
+        )
+
+
+def adjust_learning_rate(configs, optimizer, epoch):
+    """Sets the learning rate to the initial LR decayed by 2 every 30 epochs"""
+    lr = configs.learning_rate * (0.5 ** (epoch // 30))
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr

@@ -1,8 +1,11 @@
 import os
 import time
 import torch.nn as nn
+import torch
 from datetime import datetime, timedelta
 from scripts.optimizers import adam_optimizer, sgd_optimizer
+from models.vanillaCNN import Net
+from models import vgg
 
 
 class Config(object):
@@ -10,16 +13,19 @@ class Config(object):
         self.__dict__.update(dictionary)
 
 
-def get_time_format(seconds):
-    sec = timedelta(seconds=int(seconds))
-    d = datetime(1, 1, 1) + sec
+def get_time_format(d):
     if d.day - 1 == 1:
         return "%.2d:%.2d:%.2d:%.2d" % (d.day - 1, d.hour, d.minute, d.second)
     return "%.2d:%.2d:%.2d" % (d.hour, d.minute, d.second)
 
 
-def calculate_time(start_time):
-    return get_time_format(time.time() - start_time)
+def calculate_time(start_time, epoch_duration=False):
+    cal_time = time.time() - start_time
+    sec = timedelta(seconds=int(cal_time))
+    d = datetime(1, 1, 1) + sec
+    if epoch_duration:
+        return sec.seconds
+    return get_time_format(d)
 
 
 def castType(s):
@@ -44,6 +50,22 @@ def get_optimizer(configs):
         return adam_optimizer(configs)
     elif configs.optimizer == 'sgd':
         return sgd_optimizer(configs)
+
+
+def load_model(configs):
+    if configs.model == 'vanilla':
+        if configs.activation_function != "relu":
+            return Net(activation_function=configs.activation_function)
+        else:
+            return Net()
+    elif configs.model == 'vgg':
+        model = vgg.__dict__[configs.vgg_model]()
+        model.features = torch.nn.DataParallel(model.features)
+        return model
+    else:
+        print("Please config model")
+        exit(1)
+
 
 def config_dict(location):
     """

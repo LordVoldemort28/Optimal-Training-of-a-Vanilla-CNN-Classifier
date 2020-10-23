@@ -3,10 +3,9 @@ import os
 import torch
 import torch.nn as nn
 
-from models.vanillaCNN import Net
-from models import vgg
-from utils.helpers import config_dict, Config, get_optimizer
+from utils.helpers import config_dict, Config, get_optimizer, load_model
 from scripts.training import train
+from scripts.testing import test
 from scripts.loaders import load_cifar10_dataset
 from scripts.criterions import cross_entropy_loss
 
@@ -14,12 +13,7 @@ from scripts.criterions import cross_entropy_loss
 def initialization(configs):
     configs.loader, configs.labels = load_cifar10_dataset(configs)
 
-    # if configs.activation_function != "relu":
-    #     model = Net(activation_function=configs.activation_function)
-    # else:
-    #     model = Net()
-
-    model = vgg.__dict__['vgg16_bn']()
+    model = load_model(configs)
 
     if torch.cuda.is_available() == True:
         model = nn.DataParallel(model)
@@ -33,6 +27,9 @@ def initialization(configs):
 
     train(configs)
 
+    if configs.test:
+        test(configs)
+
 
 if __name__ == "__main__":
     params_dict = config_dict(os.path.join(
@@ -43,7 +40,7 @@ if __name__ == "__main__":
     experiment = Experiment(api_key=configs.api_key,
                             project_name="learning-deep", workspace="lordvoldemort28")
     experiment.set_name(configs.experiment_name)
-    experiment.add_tag("initialization")
+    experiment.add_tag(configs.model)
 
     # Log hyperparameters in comet ML
     experiment.log_parameters(configs)

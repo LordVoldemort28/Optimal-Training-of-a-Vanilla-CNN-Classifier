@@ -37,15 +37,15 @@ def load_cifar10_dataset(configs):
 
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=batch_size, sampler=train_sampler,
-        num_workers=num_workers,
+        num_workers=num_workers, pin_memory=True
     )
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=batch_size, sampler=valid_sampler,
-        num_workers=num_workers,
+        num_workers=num_workers, pin_memory=True
     )
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=batch_size, num_workers=num_workers,
-        shuffle=False
+        shuffle=False, pin_memory=True
     )
 
     classes = ('plane', 'car', 'bird', 'cat',
