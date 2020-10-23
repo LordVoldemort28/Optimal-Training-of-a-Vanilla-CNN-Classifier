@@ -113,9 +113,11 @@ def train(configs):
             configs.experiment.log_metric(
                 'loss', float(valid_loss), epoch=epoch
             )
-            configs.experiment.log_metric(
-                'epoch duration', epoch_time, epoch=epoch
-            )
+        configs.experiment.log_metric(
+            'epoch duration',
+            calculate_time(epoch_time, epoch_duration=True),
+            epoch=epoch
+        )
 
 
 def adjust_learning_rate(configs, optimizer, epoch):

@@ -13,16 +13,19 @@ class Config(object):
         self.__dict__.update(dictionary)
 
 
-def get_time_format(seconds):
-    sec = timedelta(seconds=int(seconds))
-    d = datetime(1, 1, 1) + sec
+def get_time_format(d):
     if d.day - 1 == 1:
         return "%.2d:%.2d:%.2d:%.2d" % (d.day - 1, d.hour, d.minute, d.second)
     return "%.2d:%.2d:%.2d" % (d.hour, d.minute, d.second)
 
 
-def calculate_time(start_time):
-    return get_time_format(time.time() - start_time)
+def calculate_time(start_time, epoch_duration=False):
+    cal_time = time.time() - start_time
+    sec = timedelta(seconds=int(cal_time))
+    d = datetime(1, 1, 1) + sec
+    if epoch_duration:
+        return sec.seconds
+    return get_time_format(d)
 
 
 def castType(s):

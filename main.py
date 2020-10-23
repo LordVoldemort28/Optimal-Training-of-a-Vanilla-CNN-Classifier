@@ -40,7 +40,7 @@ if __name__ == "__main__":
     experiment = Experiment(api_key=configs.api_key,
                             project_name="learning-deep", workspace="lordvoldemort28")
     experiment.set_name(configs.experiment_name)
-    experiment.add_tag(configs.experiment_tag)
+    experiment.add_tag(configs.model)
 
     # Log hyperparameters in comet ML
     experiment.log_parameters(configs)
