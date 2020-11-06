@@ -125,3 +125,10 @@ def adjust_learning_rate(configs, optimizer, epoch):
     lr = configs.learning_rate * (0.5 ** (epoch // 30))
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
+
+    # Log learning rate
+    configs.experiment.log_metric(
+        'learning rate',
+        lr,
+        epoch=epoch
+    )
