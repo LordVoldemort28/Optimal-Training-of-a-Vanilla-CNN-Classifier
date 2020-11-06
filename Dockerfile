@@ -64,8 +64,11 @@ RUN pip3 install --no-cache-dir --upgrade tensorboard
 #Comet-ml
 RUN pip3 install --no-cache-dir --upgrade comet-ml
 
+# set work directory
+WORKDIR /usr/src/
+
+COPY . .
+
 # Expose port for TensorBoard
 EXPOSE 6006
-
-WORKDIR "/root"
-CMD ["/bin/bash"]
+CMD ["/bin/zsh"]
