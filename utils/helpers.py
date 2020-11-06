@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from scripts.optimizers import adam_optimizer, sgd_optimizer
 from models.vanillaCNN import Net
 from models import vgg
+from models import resnet
 
 
 class Config(object):
@@ -61,6 +62,10 @@ def load_model(configs):
     elif configs.model == 'vgg':
         model = vgg.__dict__[configs.vgg_model]()
         model.features = torch.nn.DataParallel(model.features)
+        return model
+    elif configs.model == 'resnet':
+        model = resnet.__dict__[configs.resnet_model]()
+        model = torch.nn.DataParallel(model)
         return model
     else:
         print("Please config model")
