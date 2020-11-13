@@ -48,7 +48,9 @@ def test(configs):
                 total += data.size(0)
 
                 configs.experiment.log_metric(
-                    "accuracy", (correct/total), step=batch_idx+1)
+                    "accuracy", (correct / total), step=batch_idx + 1)
+                configs.experiment.log_metric(
+                    "error", (100-(correct/total)), step=batch_idx+1)
     # Print Total Testing Loss and Accuracy
     print('Test Loss: {:.6f}\n'.format(test_loss))
 
