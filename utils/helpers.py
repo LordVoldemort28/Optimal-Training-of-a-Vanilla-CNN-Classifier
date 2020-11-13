@@ -54,17 +54,17 @@ def get_optimizer(configs):
 
 
 def load_model(configs):
-    if configs.model == 'vanilla':
+    if configs.base_model == 'vanilla':
         if configs.activation_function != "relu":
             return Net(activation_function=configs.activation_function)
         else:
             return Net()
-    elif configs.model == 'vgg':
-        model = vgg.__dict__[configs.vgg_model]()
+    elif configs.base_model == 'vgg':
+        model = vgg.__dict__[configs.model]()
         model.features = torch.nn.DataParallel(model.features)
         return model
-    elif configs.model == 'resnet':
-        model = resnet.__dict__[configs.resnet_model]()
+    elif configs.base_model == 'resnet':
+        model = resnet.__dict__[configs.model]()
         model = torch.nn.DataParallel(model)
         return model
     else:
