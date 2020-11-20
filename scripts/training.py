@@ -127,13 +127,14 @@ def train(configs):
 def set_learning_rate(configs, optimizer, epoch):
     """Incrementing learning rate by 0.1 after 50 epoch"""
     if (epoch % 50) == 0:
-        lr = configs.learning_rate * 0.1
+        configs.learning_rate *= 0.1
         for param_group in optimizer.param_groups:
-            param_group['lr'] = lr
+            param_group['lr'] = configs.learning_rate
 
     # Log learning rate
+    print("learning rate = {}".format(configs.learning_rate))
     configs.experiment.log_metric(
         'learning rate',
-        optimizer.param_groups[0]['lr'],
+        configs.learning_rate,
         epoch=epoch
     )
