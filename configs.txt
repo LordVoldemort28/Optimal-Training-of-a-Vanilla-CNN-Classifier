@@ -1,10 +1,11 @@
 experiment_name = resnet_20
+api_key=<commet_ml_api_key>
 base_model = resnet
 model = resnet20
-api_key=<commet_ml_api_key>
 data_dir = ./data
-shuffle = True
+validation = False
 test = True
+shuffle = True
 pin_memory = True
 optimizer = sgd
 activation_function = relu

@@ -10,7 +10,7 @@ def train(configs):
     model = configs.model
     loader = configs.loader
     optimizer = configs.optimizer
-    criterion = configs.criterion.cuda()
+    criterion = configs.criterion
 
     running_loss = 0
     steps = 0
@@ -24,7 +24,8 @@ def train(configs):
         total = 0.
         epoch_time = time.time()
 
-        adjust_learning_rate(configs, optimizer, epoch)
+        # Record and adjust learning rate
+        set_learning_rate(configs, optimizer, epoch)
 
         print("============Epoch: {}=============".format(epoch))
         with configs.experiment.train():
@@ -70,6 +71,8 @@ def train(configs):
                 'loss', float(train_loss), epoch=epoch)
 
         # validate model
+        val_loader = loader['valid'] if configs.validation else loader['test']
+
         model.eval()
         correct = 0.
         total = 0.
@@ -77,7 +80,7 @@ def train(configs):
         step_val = 0
         with configs.experiment.validate():
             with torch.no_grad():
-                for batch_idx, (data, target) in enumerate(loader['valid']):
+                for batch_idx, (data, target) in enumerate(val_loader):
 
                     if torch.cuda.is_available() == True:
                         data, target = data.cuda(), target.cuda()
@@ -105,7 +108,8 @@ def train(configs):
 
             valid_acc = correct / total
             print("valid_acc = {}".format(valid_acc))
-            print("Epoch duration: {}\n".format(calculate_time(epoch_time)))
+            print("Epoch duration: {}\n".format(
+                calculate_time(epoch_time)))
 
             configs.experiment.log_metric(
                 'accuracy', valid_acc, epoch=epoch
@@ -120,15 +124,16 @@ def train(configs):
         )
 
 
-def adjust_learning_rate(configs, optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 2 every 30 epochs"""
-    lr = configs.learning_rate * (0.5 ** (epoch // 30))
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
+def set_learning_rate(configs, optimizer, epoch):
+    """Incrementing learning rate by 0.1 after 50 epoch"""
+    if (epoch % 50) == 0:
+        lr = configs.learning_rate * 0.1
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
 
     # Log learning rate
     configs.experiment.log_metric(
         'learning rate',
-        lr,
+        optimizer.param_groups[0]['lr'],
         epoch=epoch
     )
