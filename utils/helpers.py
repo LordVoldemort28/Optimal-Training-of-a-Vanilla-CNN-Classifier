@@ -7,6 +7,8 @@ from scripts.optimizers import adam_optimizer, sgd_optimizer
 from models.vanillaCNN import Net
 from models import vgg
 from models import resnet
+from models import densenet
+from models import xception
 
 
 class Config(object):
@@ -65,6 +67,14 @@ def load_model(configs):
         return model
     elif configs.base_model == 'resnet':
         model = resnet.__dict__[configs.model]()
+        model = torch.nn.DataParallel(model)
+        return model
+    elif configs.base_model == 'xception':
+        model = xception.__dict__[configs.model]()
+        model = torch.nn.DataParallel(model)
+        return model
+    elif configs.base_model == 'densenet':
+        model = densenet.__dict__[configs.model]()
         model = torch.nn.DataParallel(model)
         return model
     else:

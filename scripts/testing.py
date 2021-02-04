@@ -9,7 +9,7 @@ def test(configs):
     model = configs.model
     loader = configs.loader
     num_classes = configs.num_classes
-    criterion = configs.criterion.cuda()
+    criterion = configs.criterion
 
     correct = 0.
     test_loss = 0.

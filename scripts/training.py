@@ -15,7 +15,7 @@ def train(configs):
     running_loss = 0
     steps = 0
 
-    for epoch in range(1, epochs+1):
+    for epoch in range(1, epochs):
         train_loss = 0.0
         valid_loss = 0.0
 
@@ -28,6 +28,7 @@ def train(configs):
         set_learning_rate(configs, optimizer, epoch)
 
         print("============Epoch: {}=============".format(epoch))
+        print("learning rate = {}".format(configs.learning_rate))
         with configs.experiment.train():
 
             for batch_idx, (data, target) in enumerate(loader['train']):
@@ -132,7 +133,6 @@ def set_learning_rate(configs, optimizer, epoch):
             param_group['lr'] = configs.learning_rate
 
     # Log learning rate
-    print("learning rate = {}".format(configs.learning_rate))
     configs.experiment.log_metric(
         'learning rate',
         configs.learning_rate,
